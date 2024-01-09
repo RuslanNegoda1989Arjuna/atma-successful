@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-import React from 'react'
-
-const Form = () => {
+const Form = ({title, handleClick}) => {
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
 
@@ -12,13 +10,17 @@ const Form = () => {
           <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="email"
 
           />
           <input
               type="password"
               value={pass}
-              onChange={(e) => setPass(e.target.value)}/>
+        onChange={(e) => setPass(e.target.value)}
+      placeholder="password"
+      />
+      <button onClick={() => handleClick(email, pass)}>{title}</button>
     </div>
   )
 }
