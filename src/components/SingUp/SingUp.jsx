@@ -1,46 +1,52 @@
-import  Form  from '../Form/Form';
+import React from 'react';
+// import Form from '../Form/Form';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../redux/slice/userSlice'; 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { setUser } from '../../redux/slice/userSlice';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import RegisterForm from 'components/RegisterForm/RegisterForm';
 
-const SingUp = () => {
-    const dispatch = useDispatch();
+const SignUp = () => {
+  const dispatch = useDispatch();
+  const auth = getAuth();
 
-    
-    
-    const handlRegister = (email, password) => {
-const auth = getAuth();
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(({ user }) => {
-                dispatch(setUser({
-                    email: user.email,
-                    id: user.uid,
-                    token: user.accessToken,
-                }))
+  const handleRegister = async (email, password, displayName) => {
+    console.log(password);
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
-            })
-            .catch(console.error)
-    };
+      // Оновити профіль користувача з ім'ям
+      await updateProfile(user, {
+        displayName: displayName,
+      });
+
+      dispatch(setUser({
+        email: user.email,
+        id: user.uid,
+        token: user.accessToken,
+        displayName: user.displayName,
+      }));
+    } catch (error) {
+      console.error("Registration failed:", error);
+
+      // Визначити тип помилки
+      if (error.code === "auth/weak-password") {
+        alert('Password should be at least 6 characters.');
+      } else if (error.code === "auth/email-already-in-use") {
+        alert('This email is already registered.');
+      } else {
+        alert('Oops! Something went wrong.');
+      }
+    }
+  };
+
   return (
     <div>
-          <Form
-              title="Register"
-              handleClick = { handlRegister } />
+      <RegisterForm
+  title="Register"
+  handleSubmit={(values) => handleRegister(values.email, values.password, values.name)}
+/>
     </div>
-  )
-}
+  );
+};
 
-export default SingUp
-
-// const auth = getAuth();
-// createUserWithEmailAndPassword(auth, email, password)
-//   .then((userCredential) => {
-
-//     const user = userCredential.user;
-
-//   })
-//   .catch((error) => {
-//     const errorCode = error.code;
-//     const errorMessage = error.message;
-
-//   });
+export default SignUp;
