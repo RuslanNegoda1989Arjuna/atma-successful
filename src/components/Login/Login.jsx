@@ -4,9 +4,12 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/slice/userSlice';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
+
 const Login = () => {
   const dispatch = useDispatch();
   const auth = getAuth();
+
+  
 
   const handleLogin = async (email, password) => {
     try {

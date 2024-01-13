@@ -5,17 +5,16 @@ import styles from './registerForm.module.scss';
 const validationSchema = yup.object().shape({
   name: yup.string()
     .min(3, 'Name must be at least 3 characters')
-    .max(11, 'Name must be at most 11 characters')
+    .max(21, 'Name must be at most 11 characters')
     .required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string()
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password must contain at least one letter and one number')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, 'Password must contain at least one letter and one number')
     .required('Password is required'),
 });
 
 const RegisterForm = ({ title, handleSubmit }) => {
     const onSubmit = async (values, { resetForm }) => {
-      console.log(values)
     await handleSubmit(values);
           resetForm();
   };

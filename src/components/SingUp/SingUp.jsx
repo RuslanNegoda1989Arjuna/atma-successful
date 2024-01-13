@@ -10,14 +10,18 @@ const SignUp = () => {
   const auth = getAuth();
 
   const handleRegister = async (email, password, displayName) => {
-    console.log(password);
+    // console.log(displayName);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      // console.log(user)
 
       // Оновити профіль користувача з ім'ям
       await updateProfile(user, {
         displayName: displayName,
       });
+
+      console.log("Ім'я користувача після реєстрації:", user.displayName);
+
 
       dispatch(setUser({
         email: user.email,
@@ -38,6 +42,27 @@ const SignUp = () => {
       }
     }
   };
+
+  const user = auth.currentUser;
+if (user !== null) {
+  // The user object has basic properties such as display name, email, etc.
+  const displayName = user.displayName;
+  const email = user.email;
+  const photoURL = user.photoURL;
+  const emailVerified = user.emailVerified;
+
+  // The user's ID, unique to the Firebase project. Do NOT use
+  // this value to authenticate with your backend server, if
+  // you have one. Use User.getToken() instead.
+  const uid = user.uid;
+  console.log(email)
+  console.log(photoURL)
+  console.log(displayName)
+  console.log(emailVerified)
+  console.log(uid)
+
+  }
+
 
   return (
     <div>
