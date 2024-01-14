@@ -2,12 +2,13 @@ import React from 'react';
 // import Form from '../Form/Form';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/slice/userSlice';
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {  createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import RegisterForm from 'components/RegisterForm/RegisterForm';
+import auth from '../../firebase';
 
 const SignUp = () => {
   const dispatch = useDispatch();
-  const auth = getAuth();
+  // const auth = getAuth();
 
   const handleRegister = async (email, password, displayName) => {
     // console.log(displayName);
