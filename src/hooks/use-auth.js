@@ -5,7 +5,7 @@ export const useAuth = () => {
     const displayName = useSelector(state => state.user.displayName);
 
     return {
-        isAuth: !!token, // або можна використовувати !!token
+        isAuth: !!token,
         displayName,
         email,
         token,

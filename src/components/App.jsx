@@ -1,22 +1,29 @@
-import '../shared/styles/styles.scss';
+
 import HomePage from "pages/Home/HomePage";
 import LoginPage from "pages/Login/LoginPage";
-import RegisterPage from "pages/Register/RegisterPage";
+
 import { Routes, Route } from "react-router-dom";
 import {RestrictedRoute} from "./RestrictedRoute"
+import Success from "./Success/Success";
+import { PrivateRoute } from "./PrivateRoute";
+import NavBar from "./NavBar/NavBar";
 
 export const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<RestrictedRoute
-        component={LoginPage}
-        redirectTo="/"
-      />} />
-      <Route path="/register" element={<RestrictedRoute
-        component={RegisterPage}
-        redirectTo="/"
-      />} />
+      <Route path="/" element={<NavBar/>}>
+          <Route index element={<Success />} />
+          <Route
+            path="/home"
+            element={<PrivateRoute component={HomePage} redirectTo="/login" />}
+          />
+          <Route path="/login" element={<RestrictedRoute
+                component={LoginPage}
+                redirectTo="/home"
+          />} />
+      </Route>
+
+      
       <Route path="*" element={<h1>404 page not found</h1>} />
     </Routes>
   );

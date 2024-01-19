@@ -4,7 +4,7 @@ import { useAuth } from 'hooks/use-auth';
 import { Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { removeUser } from '../../redux/slice/userSlice';
-import EditProfile from '../../components/EditProfile/EditProfile'; // Додано імпорт EditProfile
+import EditProfile from '../../components/EditProfile/EditProfile'; 
 
 
 
@@ -13,9 +13,8 @@ const HomePage = () => {
   const { isAuth, email, displayName } = useAuth();
 
   useEffect(() => {
-    // Логіка, яка викликається при зміні імені користувача
     console.log('Display name changed:', displayName);
-  }, [displayName]); // Передавання displayName як залежності
+  }, [displayName]); 
 
   return isAuth ? (
     <div>
@@ -24,8 +23,6 @@ const HomePage = () => {
       <h3>Name:  {displayName}</h3>
       <button onClick={() => dispatch(removeUser())}>Log out from {displayName || email}</button>
       <Link to="/login">Go to login</Link>
-
-      {/* Додано компонент EditProfile */}
       <EditProfile currentDisplayName={displayName} />
     </div>
   ) : (

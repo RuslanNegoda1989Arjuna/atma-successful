@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { Suspense } from 'react'
+import { Outlet } from 'react-router-dom';
 
 const NavBar = () => {
   return (
     <div>
-      Navbar
+      <div>
+         <h1>Navbar</h1>
+      </div>
+       <Suspense fallback={<div>Loading page...</div>}>
+        <Outlet />
+      </Suspense>
     </div>
+  
   )
 }
 
