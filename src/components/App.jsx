@@ -24,7 +24,7 @@ export const App = () => {
       </Route>
 
       
-      <Route path="*" element={<h1>404 page not found</h1>} />
+      <Route path="*" element={<LoginPage/>} />
     </Routes>
   );
 };
