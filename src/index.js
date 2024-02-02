@@ -5,7 +5,8 @@ import { store } from './redux/store';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from 'components/App';
 import './index.css';
-import './firebase'
+import './firebase';
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

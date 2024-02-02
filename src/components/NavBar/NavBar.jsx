@@ -80,7 +80,7 @@ const NavBar = () => {
                 <MenuItem onClick={handleClose}>Вийти</MenuItem>
               </Menu>
             </div>) : (
-           <Button color="inherit" onClick={handleLogin}>Зайти</Button> 
+           <Button color="inherit" onClick={handleLogin}>Увійти</Button> 
           )}    
         
         </Toolbar>

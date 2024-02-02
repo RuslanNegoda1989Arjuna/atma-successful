@@ -1,7 +1,6 @@
-
+// rafce
 import HomePage from "pages/Home/HomePage";
 import LoginPage from "pages/Login/LoginPage";
-
 import { Routes, Route } from "react-router-dom";
 import {RestrictedRoute} from "./RestrictedRoute"
 import Success from "./Success/Success";
