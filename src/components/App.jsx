@@ -10,6 +10,7 @@ import NavBar from "./NavBar/NavBar";
 
 export const App = () => {
   return (
+    
     <Routes>
       <Route path="/" element={<NavBar/>}>
           <Route index element={<Success />} />
