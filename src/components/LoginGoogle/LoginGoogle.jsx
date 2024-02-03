@@ -7,8 +7,12 @@ import {
   alpha,
   getContrastRatio,
 } from '@mui/material/styles';
-import {  firestore } from '../../firebase'
-import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+// import {  firestore } from '../../firebase'
+import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { setUser } from '../../redux/slice/userSlice';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 // rafce
@@ -29,13 +33,16 @@ const theme = createTheme({
 
 const LoginGoogle = () => {
     const auth = getAuth();
+  const dispatch = useDispatch();
 
-     useEffect(() => {
+  useEffect(() => {
     const handleRedirect = async () => {
       try {
         const result = await getRedirectResult(auth);
-        if (result.user) {
-          console.log(result.user);
+        if (result && result.user) {
+          const { uid, displayName, email, photoURL, refreshToken } = result.user;
+          dispatch(setUser({ uid, displayName, email, token: refreshToken, photoURL }));
+          toast.success(`Ви увійшли як ${displayName || email}`);
         }
       } catch (error) {
         console.error(error);
@@ -43,24 +50,14 @@ const LoginGoogle = () => {
     };
 
     handleRedirect();
-  }, [auth]);
+  }, [auth, dispatch]);
+
 
   const login = () => {
     const provider = new GoogleAuthProvider();
     signInWithRedirect(auth, provider);
   };
 
-//  const login = async () => {
-//     const provider = new GoogleAuthProvider();
-//     try {
-//       const result = await signInWithPopup(auth, provider);
-//       const user = result.user;
-//       console.log(user);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//     };
-    
   return (
       <div>
             <ThemeProvider theme={theme}>

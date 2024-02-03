@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react'
-import { Outlet, useNavigate  } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,12 +10,18 @@ import HouseRoundedIcon from '@mui/icons-material/HouseRounded';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-
+import { useAuth } from '../../hooks/use-auth';
+import Avatar from '@mui/material/Avatar';
+import { getAuth, signOut } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '../../redux/slice/userSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NavBar = () => {
-
-  const [user, setUser] = React.useState(false);
+  const { isAuth, displayName, photoURL } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const dispatch = useDispatch();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -26,75 +32,94 @@ const NavBar = () => {
   };
   const navigate = useNavigate();
   const handleHomeClick = () => {
-    navigate('/')
-  }
+    navigate('/');
+  };
   const handleLogin = () => {
-    navigate('/login')
-  }
+    navigate('/login');
+  };
+
+  const handleLogout = () => {
+    const auth = getAuth();  
+    signOut(auth).then(() => {
+
+    dispatch(removeUser());
+      
+    toast.success('Ви вийшли з облікового запису');
+  }).catch((error) => {
+    console.error('Sign out error:', error);
+  }).finally(() => {
+    handleClose();
+  });
+};
+
   return (
-    <diм>
+    <div>
       <div>
-         <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={handleHomeClick}    
-          >
-            <HouseRoundedIcon fontSize='large'/>
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Успішник
-          </Typography>
-           {user ? ( <div>
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static">
+            <Toolbar>
               <IconButton
                 size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
+                edge="start"
                 color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+                onClick={handleHomeClick}
               >
-                <AccountCircle />
+                <HouseRoundedIcon fontSize="large" />
               </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Вийти</MenuItem>
-              </Menu>
-            </div>) : (
-           <Button color="inherit" onClick={handleLogin}>Увійти</Button> 
-          )}    
-        
-        </Toolbar>
-      </AppBar>
-    </Box>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Успішник
+              </Typography>
+              {isAuth ? (
+                <div>
+                  <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleMenu}
+                    color="inherit"
+                  >
+                    {photoURL ? (
+                      <Avatar alt={displayName} src={photoURL} />
+                    ) : (
+                      <AccountCircle />
+                    )}
+                  </IconButton>
+                  <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={handleLogout}>Вийти</MenuItem>
+                  </Menu>
+                </div>
+              ) : (
+                <Button color="inherit" onClick={handleLogin}>
+                  Увійти
+                </Button>
+              )}
+            </Toolbar>
+          </AppBar>
+        </Box>
       </div>
-       <Suspense fallback={<div>Loading page...</div>}>
+      <Suspense fallback={<div>Loading page...</div>}>
         <Outlet />
       </Suspense>
-    </diм>
-  
-  )
-}
+    </div>
+  );
+};
 
-export default NavBar
-
-
+export default NavBar;

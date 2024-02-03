@@ -6,10 +6,11 @@ import {RestrictedRoute} from "./RestrictedRoute"
 import Success from "./Success/Success";
 import { PrivateRoute } from "./PrivateRoute";
 import NavBar from "./NavBar/NavBar";
+import { ToastContainer } from 'react-toastify';
 
 export const App = () => {
   return (
-    
+    <>
     <Routes>
       <Route path="/" element={<NavBar/>}>
           <Route index element={<Success />} />
@@ -25,6 +26,10 @@ export const App = () => {
 
       
       <Route path="*" element={<LoginPage/>} />
-    </Routes>
+      </Routes>
+      <ToastContainer />
+    </>
+    
+    
   );
 };

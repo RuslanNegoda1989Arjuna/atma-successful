@@ -1,33 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  uid: null,
+  displayName: null,
   email: null,
   token: null,
-  id: null,
-  displayName: null, // Додано displayName
+  photoURL: null,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action) { 
-      state.email = action.payload.email;
-      state.token = action.payload.token;
-      state.id = action.payload.id;
-      state.displayName = action.payload.displayName; // Додано рядок
+    setUser(state, action) {
+      const { uid, displayName, email, token, photoURL } = action.payload;
+      state.uid = uid;
+      state.displayName = displayName;
+      state.email = email;
+      state.token = token;
+      state.photoURL = photoURL;
     },
     removeUser(state) {
+      state.uid = null;
+      state.displayName = null;
       state.email = null;
       state.token = null;
-      state.id = null;
-      state.displayName = null; // Додано рядок
-    },
-    setDisplayName(state, action) {
-      state.displayName = action.payload; // Додано функцію setDisplayName
+      state.photoURL = null;
     },
   },
 });
 
-export const { setUser, removeUser, setDisplayName } = userSlice.actions;
+export const { setUser, removeUser } = userSlice.actions;
 export default userSlice.reducer;
