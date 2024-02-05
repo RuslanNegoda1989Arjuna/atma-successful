@@ -6,6 +6,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -30,16 +31,18 @@ const HabitTracker = () => {
   const [progress, setProgress] = useState(0);
   const [buttonActivity, setButtonActivity] = useState(Array(21).fill(false));
   const [ratings, setRatings] = useState(Array(21).fill(0));
-  const [daysCount, setDaysCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 7;
 
   useEffect(() => {
-    if (daysCount > 0 && daysCount % 7 === 0) {
+    if (buttonActivity.every((activity) => activity)) {
+      alert('Вітаю, ти сформував нову корисну звичку!');
       setProgress(0);
       setButtonActivity(Array(21).fill(false));
       setRatings(Array(21).fill(0));
-      alert('Вітаю, ти сформував нову корисну звичку!');
+      setPage(1);
     }
-  }, [daysCount]);
+  }, [buttonActivity]);
 
   const handleDayClick = (day) => {
     if (buttonActivity[day - 1]) return;
@@ -48,11 +51,6 @@ const HabitTracker = () => {
     setButtonActivity((prev) => {
       const newButtonActivity = [...prev];
       newButtonActivity[day - 1] = true;
-
-      if (newButtonActivity.every((button) => button)) {
-        setDaysCount((prev) => prev + 1);
-      }
-
       return newButtonActivity;
     });
   };
@@ -67,6 +65,33 @@ const HabitTracker = () => {
 
   const totalRating = ratings.reduce((total, rating) => total + rating, 0);
 
+  const renderButtons = () => {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+
+    return [...Array(21)].map((_, index) => (
+      (index >= start && index < end) && (
+        <Box key={index + 1} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Button
+            variant={buttonActivity[index] ? 'outlined' : 'contained'}
+            onClick={() => handleDayClick(index + 1)}
+            disabled={buttonActivity[index]}
+          >
+            {`Day ${index + 1}`}
+          </Button>
+          <Typography sx={{ ml: 1 }}>
+            <CustomizedRating
+              value={ratings[index]}
+              onChangeRating={(value) => handleRatingChange(value, index)}
+            />
+          </Typography>
+        </Box>
+      )
+    ));
+  };
+
+  const totalPages = Math.ceil(21 / itemsPerPage);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
@@ -80,23 +105,19 @@ const HabitTracker = () => {
         value={progress}
         sx={{ width: '80%', height: '20px', mb: 2 }}
       />
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].map((day) => (
-        <Box key={day} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Button
-            variant={buttonActivity[day - 1] ? 'outlined' : 'contained'}
-            onClick={() => handleDayClick(day)}
-            disabled={buttonActivity[day - 1]}
-          >
-            {`Day ${day}`}
-          </Button>
-          <Typography sx={{ ml: 1 }}>
-            <CustomizedRating
-              value={ratings[day - 1]}
-              onChangeRating={(value) => handleRatingChange(value, day - 1)}
-            />
-          </Typography>
-        </Box>
-      ))}
+      {renderButtons()}
+      <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
+        <Button
+          onClick={() => setPage((prev) => (prev > 1 ? prev - 1 : prev))}
+          disabled={page === 1}
+        >
+          <ArrowBackIcon />
+          Back
+        </Button>
+        <Button onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}>
+          Show More
+        </Button>
+      </Box>
     </Box>
   );
 };
