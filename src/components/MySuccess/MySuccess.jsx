@@ -42,12 +42,20 @@ const HabitTracker = () => {
     setButtonActivity((prev) => {
       const newButtonActivity = [...prev];
       newButtonActivity[day - 1] = true;
+
+      if (newButtonActivity.every((button) => button)) {
+        setProgress(0);
+        setActiveDay(0);
+        alert('Вітаю, ти сформував нову корисну звичку!');
+      }
+
       return newButtonActivity;
     });
   };
 
   const handleRatingChange = (value) => {
-    if (value === 3) {
+    // Якщо рейтинг досягає 3, але не активовані всі дні, то теж скидаємо
+    if (value === 3 && !buttonActivity.includes(false)) {
       setProgress(0);
       setActiveDay(0);
       alert('Вітаю, ти сформував нову корисну звичку!');
