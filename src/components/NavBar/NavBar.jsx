@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -17,10 +17,11 @@ import { useDispatch } from 'react-redux';
 import { removeUser } from '../../redux/slice/userSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Navigation} from './Navigation/Navigation'
 
 const NavBar = () => {
   const { isAuth, displayName, photoURL } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
 
   const handleMenu = (event) => {
@@ -59,7 +60,8 @@ const NavBar = () => {
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static">
             <Toolbar>
-              <IconButton
+              <Navigation/>
+              {/* <IconButton
                 size="large"
                 edge="start"
                 color="inherit"
@@ -71,7 +73,7 @@ const NavBar = () => {
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Успішник
-              </Typography>
+              </Typography> */}
               {isAuth ? (
                 <div>
                   <IconButton
