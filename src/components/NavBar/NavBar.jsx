@@ -31,6 +31,7 @@ const NavBar = () => {
     setAnchorEl(null);
   };
   const navigate = useNavigate();
+  
   const handleHomeClick = () => {
     navigate('/');
   };
