@@ -13,7 +13,6 @@ const HomePage = () => {
     <div>
       <h1>HomePage</h1>
       <h2>Welcome {displayName || email}</h2>
-      <h3>Розпочнемо роботу над конисними навичками</h3>
       <HabitTracker/>
     </div>
   ) : (

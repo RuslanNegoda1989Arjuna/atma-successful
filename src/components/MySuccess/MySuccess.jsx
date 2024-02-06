@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { StyledRating } from './MySuccess.styled';
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -14,7 +14,7 @@ const CustomizedRating = ({ value, onChangeRating }) => {
   };
 
   return (
-    <Rating
+    <StyledRating
       name="customized-color"
       value={value}
       onChange={handleChange}

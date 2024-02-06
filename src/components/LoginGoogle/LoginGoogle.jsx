@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModalGrid, StyledGrid } from './LoginGoogle.styled';
 import { Box, Button } from '@mui/material'
 import {
@@ -8,14 +8,13 @@ import {
   getContrastRatio,
 } from '@mui/material/styles';
 import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
-import {app} from '../../firebase'
+import { app } from '../../firebase'
 import { setUser } from '../../redux/slice/userSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
-// rafce
+import CircularIndeterminate from 'components/CircularIndeterminate';
+ // Імпортуємо компонент Loader
 
 const violetBase = '#7F00FF';
 const violetMain = alpha(violetBase, 0.7);
@@ -32,11 +31,14 @@ const theme = createTheme({
 });
 
 const LoginGoogle = () => {
-    const auth = getAuth(app);
+  const [isLoading, setIsLoading] = useState(false); // Додаємо стан isLoading
+
+  const auth = getAuth(app);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const handleRedirect = async () => {
+      setIsLoading(true); // Встановлюємо isLoading на true перед початком аутентифікації
       try {
         const result = await getRedirectResult(auth);
         if (result && result.user) {
@@ -46,12 +48,13 @@ const LoginGoogle = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false); // Позначаємо завершення аутентифікації, незалежно від результату
       }
     };
 
     handleRedirect();
   }, [auth, dispatch]);
-
 
   const login = () => {
     const provider = new GoogleAuthProvider();
@@ -59,19 +62,19 @@ const LoginGoogle = () => {
   };
 
   return (
-      <div>
-            <ThemeProvider theme={theme}>
-              <StyledGrid container>
-              <ModalGrid container>
-                  <Box p={5}>
-                      <Button onClick={login} variant="contained" color="violet">Увійти за допомогою Google</Button>
-                  </Box>
-              </ModalGrid>
-            </StyledGrid>
-        </ThemeProvider>
-          
+    <div>
+      {isLoading && <CircularIndeterminate />} {/* Показуємо Loader, якщо isLoading === true */}
+      <ThemeProvider theme={theme}>
+        <StyledGrid container>
+          <ModalGrid container>
+            <Box p={5}>
+              <Button onClick={login} variant="contained" color="violet">Увійти за допомогою Google</Button>
+            </Box>
+          </ModalGrid>
+        </StyledGrid>
+      </ThemeProvider>
     </div>
-  )
+  );
 }
 
-export default LoginGoogle
+export default LoginGoogle;
