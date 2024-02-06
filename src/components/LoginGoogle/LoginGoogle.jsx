@@ -7,7 +7,6 @@ import {
   alpha,
   getContrastRatio,
 } from '@mui/material/styles';
-// import {  firestore } from '../../firebase'
 import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import {app} from '../../firebase'
 import { setUser } from '../../redux/slice/userSlice';
