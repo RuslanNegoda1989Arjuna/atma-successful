@@ -25,7 +25,7 @@ export const App = () => {
       </Route>
 
       
-      <Route path="*" element={<LoginPage/>} />
+      <Route path="*" element={<NavBar/>} />
       </Routes>
       <ToastContainer />
     </>

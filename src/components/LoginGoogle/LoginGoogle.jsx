@@ -9,6 +9,7 @@ import {
 } from '@mui/material/styles';
 // import {  firestore } from '../../firebase'
 import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import {app} from '../../firebase'
 import { setUser } from '../../redux/slice/userSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -32,7 +33,7 @@ const theme = createTheme({
 });
 
 const LoginGoogle = () => {
-    const auth = getAuth();
+    const auth = getAuth(app);
   const dispatch = useDispatch();
 
   useEffect(() => {
