@@ -7,6 +7,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { StyledRating } from './MySuccess.styled';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -36,7 +38,7 @@ const HabitTracker = () => {
 
   useEffect(() => {
     if (buttonActivity.every((activity) => activity)) {
-      alert('Вітаю, ти сформував нову корисну звичку!');
+      toast.success('Вітаю, ти сформував нову корисну звичку!');
       setProgress(0);
       setButtonActivity(Array(21).fill(false));
       setRatings(Array(21).fill(0));
@@ -74,10 +76,11 @@ const HabitTracker = () => {
         <Box key={index + 1} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Button
             variant={buttonActivity[index] ? 'outlined' : 'contained'}
+            sx={{ width: '150px' }}
             onClick={() => handleDayClick(index + 1)}
             disabled={buttonActivity[index]}
           >
-            {`Day ${index + 1}`}
+            {`День ${index + 1}`}
           </Button>
           <Typography sx={{ ml: 1 }}>
             <CustomizedRating
@@ -95,17 +98,17 @@ const HabitTracker = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Дні активованих кнопок: {buttonActivity.filter(Boolean).length}
+        Днів виконую звичку: {buttonActivity.filter(Boolean).length}
       </Typography>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Бали: {totalRating}
+        Всього балів: {totalRating}
       </Typography>
+      {renderButtons()}
       <LinearProgress
         variant="determinate"
         value={progress}
-        sx={{ width: '80%', height: '20px', mb: 2 }}
+        sx={{ width: '80%', height: '20px', mb: 2, borderRadius: '10px',marginTop: '20px' }}
       />
-      {renderButtons()}
       <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
         <Button
           onClick={() => setPage((prev) => (prev > 1 ? prev - 1 : prev))}
@@ -117,6 +120,7 @@ const HabitTracker = () => {
         <Button onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}>
           Show More
         </Button>
+        
       </Box>
     </Box>
   );

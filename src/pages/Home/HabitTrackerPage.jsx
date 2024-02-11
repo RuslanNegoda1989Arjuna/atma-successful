@@ -2,17 +2,17 @@ import React from 'react';
 import { useAuth } from 'hooks/use-auth';
 import { Navigate } from 'react-router-dom';
 import HabitTracker from 'components/MySuccess/MySuccess';
+import { WelcomeTitle } from './HabitTrackerPage.styled';
 
 // Star icon
 
 
-const HomePage = () => {
+const HabitTrackerPage = () => {
   const { isAuth, email, displayName } = useAuth();
 
   return isAuth ? (
     <div>
-      <h1>HomePage</h1>
-      <h2>Welcome {displayName || email}</h2>
+      <WelcomeTitle>Welcome {displayName || email}</WelcomeTitle>
       <HabitTracker/>
     </div>
   ) : (
@@ -20,4 +20,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default HabitTrackerPage;

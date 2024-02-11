@@ -1,5 +1,4 @@
 import { useAuth } from '../../../hooks/use-auth';
-// import { HomeNavLink } from './Navigation.styled';
 import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -9,7 +8,6 @@ import StarPurple500Icon from '@mui/icons-material/StarPurple500';
 
 export const Navigation = () => {
    const { isAuth } = useAuth();
-  // const isLoggedInT = true;
   const navigate = useNavigate();
   const handleHomeClick = () => {
     navigate('/');
