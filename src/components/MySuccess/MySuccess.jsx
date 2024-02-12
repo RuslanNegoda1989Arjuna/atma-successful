@@ -9,6 +9,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { StyledRating } from './MySuccess.styled';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {  addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -46,16 +49,34 @@ const HabitTracker = () => {
     }
   }, [buttonActivity]);
 
-  const handleDayClick = (day) => {
-    if (buttonActivity[day - 1]) return;
+const handleDayClick = async (day) => {
+  if (buttonActivity[day - 1]) return;
 
-    setProgress((prevProgress) => prevProgress + (1 / 21) * 100);
-    setButtonActivity((prev) => {
-      const newButtonActivity = [...prev];
-      newButtonActivity[day - 1] = true;
-      return newButtonActivity;
+  setProgress((prevProgress) => prevProgress + (1 / 21) * 100);
+  setButtonActivity((prev) => {
+    const newButtonActivity = [...prev];
+    newButtonActivity[day - 1] = true;
+    return newButtonActivity;
+  });
+
+  try {
+    // Отримання посилання на колекцію "days"
+    const daysCollectionRef = collection(db, 'days');
+
+    // Отримання посилання на документ у колекції "days" за допомогою ID дня
+    const dayDocRef = doc(daysCollectionRef, "new");
+
+    // Оновлення існуючого документу
+    await setDoc(dayDocRef, {
+      dayNumber: day,
+      rating: ratings[day - 1],
+      // Додайте інші дані, які вам потрібно зберегти
     });
-  };
+  } catch (error) {
+    console.error("Помилка при оновленні документу: ", error);
+  }
+};
+
 
   const handleRatingChange = (value, index) => {
     setRatings((prev) => {
