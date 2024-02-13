@@ -9,7 +9,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { StyledRating } from './MySuccess.styled';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {  addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
 
