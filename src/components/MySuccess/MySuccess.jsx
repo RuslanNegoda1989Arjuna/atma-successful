@@ -79,15 +79,18 @@ const HabitTracker = () => {
   }, []);
 
   useEffect(() => {
+
+    if (buttonsData.length === 0) return;
     const totalActiveButtons = buttonsData.filter(button => !button.active).length;
     const totalButtons = buttonsData.length;
-    // const progressPercentage = (totalActiveButtons / totalButtons) * 100;
     const progressPercentage = (totalButtons > 0 && !isNaN(totalActiveButtons / totalButtons)) ? (totalActiveButtons / totalButtons) * 100 : 0;
     setProgress(progressPercentage);
 
     console.log(buttonsData.every(obj => !obj.active))
 
-    if (buttonsData.length > 0 && buttonsData.every(obj => !obj.active)) {
+    const isAllButtonsInactive = buttonsData.every(button => !button.active);
+
+    if (buttonsData.length > 0 && isAllButtonsInactive) {
       toast.success('Вітаю, ти сформував нову корисну звичку!');
       setButtonsData(buttonsObj);
       setPage(1);
