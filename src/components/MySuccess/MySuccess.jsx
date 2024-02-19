@@ -9,9 +9,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { StyledRating } from './MySuccess.styled';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -56,81 +55,83 @@ const buttonsObj = [
   { id: 21, active: true, rating: 0 }
 ];
 
-
 const HabitTracker = () => {
   const [progress, setProgress] = useState(0);
-  const [buttonActivity, setButtonActivity] = useState(Array(21).fill(false));
-  const [ratings, setRatings] = useState(Array(21).fill(0));
   const [page, setPage] = useState(1);
   const itemsPerPage = 7;
-   const [buttonsData, setButtonsData] = useState(buttonsObj);
+  const [buttonsData, setButtonsData] = useState([]);
 
   useEffect(() => {
-    if (buttonActivity.every((activity) => activity)) {
+    const fetchData = async () => {
+      try {
+        const dayDocRef = doc(db, 'days', 'new');
+        const daySnap = await getDoc(dayDocRef);
+        if (daySnap.exists()) {
+          setButtonsData(daySnap.data().buttonsData);
+        } else {
+          setButtonsData(buttonsObj);
+        }
+      } catch (error) {
+        console.error("Помилка при отриманні документу:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const totalActiveButtons = buttonsData.filter(button => !button.active).length;
+    const totalButtons = buttonsData.length;
+    // const progressPercentage = (totalActiveButtons / totalButtons) * 100;
+    const progressPercentage = (totalButtons > 0 && !isNaN(totalActiveButtons / totalButtons)) ? (totalActiveButtons / totalButtons) * 100 : 0;
+    setProgress(progressPercentage);
+
+    console.log(buttonsData.every(obj => !obj.active))
+
+    if (buttonsData.length > 0 && buttonsData.every(obj => !obj.active)) {
       toast.success('Вітаю, ти сформував нову корисну звичку!');
-      setProgress(0);
-      setButtonActivity(Array(21).fill(false));
-      setRatings(Array(21).fill(0));
+      setButtonsData(buttonsObj);
       setPage(1);
     }
-  }, [buttonActivity]);
+  }, [buttonsData]);
+  console.log('2:', progress)
 
-// const handleDayClick = async (day) => {
-//   if (buttonActivity[day - 1]) return;
-
-//   setProgress((prevProgress) => prevProgress + (1 / 21) * 100);
-//   setButtonActivity((prev) => {
-//     const newButtonActivity = [...prev];
-//     newButtonActivity[day - 1] = true;
-//     return newButtonActivity;
-//   });
-
-//   try {
-//     // Отримання посилання на колекцію "days"
-//     const daysCollectionRef = collection(db, 'days');
-
-//     // Отримання посилання на документ у колекції "days" за допомогою ID дня
-//     const dayDocRef = doc(daysCollectionRef, "new");
-
-//     // Оновлення існуючого документу
-//     await setDoc(dayDocRef, {
-//       dayNumber: day,
-//       rating: ratings[day - 1],
-//       // Додайте інші дані, які вам потрібно зберегти
-//     });
-//   } catch (error) {
-//     console.error("Помилка при оновленні документу: ", error);
-//   }
-// };
- const handleDayClick = (id) => {
+  const handleDayClick = async (id) => {
     const updatedButtonsData = buttonsData.map(button =>
       button.id === id ? { ...button, active: !button.active } : button
     );
     setButtonsData(updatedButtonsData);
+
+    try {
+      const daysCollectionRef = collection(db, 'days');
+      const dayDocRef = doc(daysCollectionRef, "new");
+      await setDoc(dayDocRef, { buttonsData: updatedButtonsData });
+    } catch (error) {
+      console.error("Помилка при оновленні документу: ", error);
+    }
   };
 
-  const handleRatingChange = (value, id) => {
+  const handleRatingChange = async (value, id) => {
     const updatedButtonsData = buttonsData.map(button =>
       button.id === id ? { ...button, rating: value } : button
     );
     setButtonsData(updatedButtonsData);
+
+    try {
+      const daysCollectionRef = collection(db, 'days');
+      const dayDocRef = doc(daysCollectionRef, "new");
+      const daySnap = await getDoc(dayDocRef);
+      const currentData = daySnap.data() || {};
+      await setDoc(dayDocRef, { ...currentData, buttonsData: updatedButtonsData });
+    } catch (error) {
+      console.error("Помилка при оновленні документу: ", error);
+    }
   };
 
-
-  // const handleRatingChange = (value, index) => {
-  //   setRatings((prev) => {
-  //     const newRatings = [...prev];
-  //     newRatings[index] = value;
-  //     return newRatings;
-  //   });
-  // };
-
-  const totalRating = ratings.reduce((total, rating) => total + rating, 0);
+  const totalRating = buttonsData.reduce((acc, obj) => acc + obj.rating, 0);
 
   const renderButtons = () => {
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-
     return buttonsData.slice(start, end).map((button, index) => (
       <Box key={button.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
         <Button
@@ -151,38 +152,12 @@ const HabitTracker = () => {
     ));
   };
 
-  // const renderButtons = () => {
-  //   const start = (page - 1) * itemsPerPage;
-  //   const end = start + itemsPerPage;
-
-  //   return [...Array(21)].map((_, index) => (
-  //     (index >= start && index < end) && (
-  //       <Box key={index + 1} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-  //         <Button
-  //           variant={buttonActivity[index] ? 'outlined' : 'contained'}
-  //           sx={{ width: '150px' }}
-  //           onClick={() => handleDayClick(index + 1)}
-  //           disabled={buttonActivity[index]}
-  //         >
-  //           {`День ${index + 1}`}
-  //         </Button>
-  //         <Typography sx={{ ml: 1 }}>
-  //           <CustomizedRating
-  //             value={ratings[index]}
-  //             onChangeRating={(value) => handleRatingChange(value, index)}
-  //           />
-  //         </Typography>
-  //       </Box>
-  //     )
-  //   ));
-  // };
-
   const totalPages = Math.ceil(21 / itemsPerPage);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Днів виконую звичку: {buttonActivity.filter(Boolean).length}
+        Днів виконую звичку: {buttonsData.filter(obj => !obj.active).length}
       </Typography>
       <Typography variant="h6" sx={{ mb: 2 }}>
         Всього балів: {totalRating}
@@ -191,7 +166,7 @@ const HabitTracker = () => {
       <LinearProgress
         variant="determinate"
         value={progress}
-        sx={{ width: '80%', height: '20px', mb: 2, borderRadius: '10px',marginTop: '20px' }}
+        sx={{ width: '80%', height: '20px', mb: 2, borderRadius: '10px', marginTop: '20px' }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
         <Button
@@ -204,7 +179,6 @@ const HabitTracker = () => {
         <Button onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}>
           Show More
         </Button>
-        
       </Box>
     </Box>
   );
