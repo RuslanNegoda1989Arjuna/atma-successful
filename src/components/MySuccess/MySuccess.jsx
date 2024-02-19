@@ -32,12 +32,38 @@ const CustomizedRating = ({ value, onChangeRating }) => {
   );
 };
 
+const buttonsObj = [
+  { id: 1, active: true, rating: 0 },
+  { id: 2, active: true, rating: 0 },
+  { id: 3, active: true, rating: 0 },
+  { id: 4, active: true, rating: 0 },
+  { id: 5, active: true, rating: 0 },
+  { id: 6, active: true, rating: 0 },
+  { id: 7, active: true, rating: 0 },
+  { id: 8, active: true, rating: 0 },
+  { id: 9, active: true, rating: 0 },
+  { id: 10, active: true, rating: 0 },
+  { id: 11, active: true, rating: 0 },
+  { id: 12, active: true, rating: 0 },
+  { id: 13, active: true, rating: 0 },
+  { id: 14, active: true, rating: 0 },
+  { id: 15, active: true, rating: 0 },
+  { id: 16, active: true, rating: 0 },
+  { id: 17, active: true, rating: 0 },
+  { id: 18, active: true, rating: 0 },
+  { id: 19, active: true, rating: 0 },
+  { id: 20, active: true, rating: 0 },
+  { id: 21, active: true, rating: 0 }
+];
+
+
 const HabitTracker = () => {
   const [progress, setProgress] = useState(0);
   const [buttonActivity, setButtonActivity] = useState(Array(21).fill(false));
   const [ratings, setRatings] = useState(Array(21).fill(0));
   const [page, setPage] = useState(1);
   const itemsPerPage = 7;
+   const [buttonsData, setButtonsData] = useState(buttonsObj);
 
   useEffect(() => {
     if (buttonActivity.every((activity) => activity)) {
@@ -49,42 +75,55 @@ const HabitTracker = () => {
     }
   }, [buttonActivity]);
 
-const handleDayClick = async (day) => {
-  if (buttonActivity[day - 1]) return;
+// const handleDayClick = async (day) => {
+//   if (buttonActivity[day - 1]) return;
 
-  setProgress((prevProgress) => prevProgress + (1 / 21) * 100);
-  setButtonActivity((prev) => {
-    const newButtonActivity = [...prev];
-    newButtonActivity[day - 1] = true;
-    return newButtonActivity;
-  });
+//   setProgress((prevProgress) => prevProgress + (1 / 21) * 100);
+//   setButtonActivity((prev) => {
+//     const newButtonActivity = [...prev];
+//     newButtonActivity[day - 1] = true;
+//     return newButtonActivity;
+//   });
 
-  try {
-    // Отримання посилання на колекцію "days"
-    const daysCollectionRef = collection(db, 'days');
+//   try {
+//     // Отримання посилання на колекцію "days"
+//     const daysCollectionRef = collection(db, 'days');
 
-    // Отримання посилання на документ у колекції "days" за допомогою ID дня
-    const dayDocRef = doc(daysCollectionRef, "new");
+//     // Отримання посилання на документ у колекції "days" за допомогою ID дня
+//     const dayDocRef = doc(daysCollectionRef, "new");
 
-    // Оновлення існуючого документу
-    await setDoc(dayDocRef, {
-      dayNumber: day,
-      rating: ratings[day - 1],
-      // Додайте інші дані, які вам потрібно зберегти
-    });
-  } catch (error) {
-    console.error("Помилка при оновленні документу: ", error);
-  }
-};
-
-
-  const handleRatingChange = (value, index) => {
-    setRatings((prev) => {
-      const newRatings = [...prev];
-      newRatings[index] = value;
-      return newRatings;
-    });
+//     // Оновлення існуючого документу
+//     await setDoc(dayDocRef, {
+//       dayNumber: day,
+//       rating: ratings[day - 1],
+//       // Додайте інші дані, які вам потрібно зберегти
+//     });
+//   } catch (error) {
+//     console.error("Помилка при оновленні документу: ", error);
+//   }
+// };
+ const handleDayClick = (id) => {
+    const updatedButtonsData = buttonsData.map(button =>
+      button.id === id ? { ...button, active: !button.active } : button
+    );
+    setButtonsData(updatedButtonsData);
   };
+
+  const handleRatingChange = (value, id) => {
+    const updatedButtonsData = buttonsData.map(button =>
+      button.id === id ? { ...button, rating: value } : button
+    );
+    setButtonsData(updatedButtonsData);
+  };
+
+
+  // const handleRatingChange = (value, index) => {
+  //   setRatings((prev) => {
+  //     const newRatings = [...prev];
+  //     newRatings[index] = value;
+  //     return newRatings;
+  //   });
+  // };
 
   const totalRating = ratings.reduce((total, rating) => total + rating, 0);
 
@@ -92,27 +131,51 @@ const handleDayClick = async (day) => {
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
-    return [...Array(21)].map((_, index) => (
-      (index >= start && index < end) && (
-        <Box key={index + 1} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Button
-            variant={buttonActivity[index] ? 'outlined' : 'contained'}
-            sx={{ width: '150px' }}
-            onClick={() => handleDayClick(index + 1)}
-            disabled={buttonActivity[index]}
-          >
-            {`День ${index + 1}`}
-          </Button>
-          <Typography sx={{ ml: 1 }}>
-            <CustomizedRating
-              value={ratings[index]}
-              onChangeRating={(value) => handleRatingChange(value, index)}
-            />
-          </Typography>
-        </Box>
-      )
+    return buttonsData.slice(start, end).map((button, index) => (
+      <Box key={button.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+        <Button
+          variant={button.active ? 'outlined' : 'contained'}
+          sx={{ width: '150px' }}
+          onClick={() => handleDayClick(button.id)}
+          disabled={!button.active}
+        >
+          {`День ${index + start + 1}`}
+        </Button>
+        <Typography sx={{ ml: 1 }}>
+          <CustomizedRating
+            value={button.rating}
+            onChangeRating={(value) => handleRatingChange(value, button.id)}
+          />
+        </Typography>
+      </Box>
     ));
   };
+
+  // const renderButtons = () => {
+  //   const start = (page - 1) * itemsPerPage;
+  //   const end = start + itemsPerPage;
+
+  //   return [...Array(21)].map((_, index) => (
+  //     (index >= start && index < end) && (
+  //       <Box key={index + 1} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+  //         <Button
+  //           variant={buttonActivity[index] ? 'outlined' : 'contained'}
+  //           sx={{ width: '150px' }}
+  //           onClick={() => handleDayClick(index + 1)}
+  //           disabled={buttonActivity[index]}
+  //         >
+  //           {`День ${index + 1}`}
+  //         </Button>
+  //         <Typography sx={{ ml: 1 }}>
+  //           <CustomizedRating
+  //             value={ratings[index]}
+  //             onChangeRating={(value) => handleRatingChange(value, index)}
+  //           />
+  //         </Typography>
+  //       </Box>
+  //     )
+  //   ));
+  // };
 
   const totalPages = Math.ceil(21 / itemsPerPage);
 

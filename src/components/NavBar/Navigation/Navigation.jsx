@@ -13,7 +13,7 @@ export const Navigation = () => {
     navigate('/');
   };
   const handleMySuccessClick = () => {
-    navigate('/home');
+    navigate('/habittracker');
   };
 
   return (
