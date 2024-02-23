@@ -86,8 +86,6 @@ const HabitTracker = () => {
     const progressPercentage = (totalButtons > 0 && !isNaN(totalActiveButtons / totalButtons)) ? (totalActiveButtons / totalButtons) * 100 : 0;
     setProgress(progressPercentage);
 
-    console.log(buttonsData.every(obj => !obj.active))
-
     const isAllButtonsInactive = buttonsData.every(button => !button.active);
 
     if (buttonsData.length > 0 && isAllButtonsInactive) {
@@ -96,7 +94,6 @@ const HabitTracker = () => {
       setPage(1);
     }
   }, [buttonsData]);
-  console.log('2:', progress)
 
   const handleDayClick = async (id) => {
     const updatedButtonsData = buttonsData.map(button =>
