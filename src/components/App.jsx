@@ -7,8 +7,18 @@ import { PrivateRoute } from "./PrivateRoute";
 import NavBar from "./NavBar/NavBar";
 import { ToastContainer } from 'react-toastify';
 import HabitTrackerPage from "pages/Home/HabitTrackerPage";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase'
+import CircularIndeterminate from 'components/CircularIndeterminate';
 
 export const App = () => {
+
+  const [, loading] = useAuthState(auth);
+
+    if (loading) {
+    return <CircularIndeterminate/>;
+  }
+
   return (
     <>
     <Routes>
