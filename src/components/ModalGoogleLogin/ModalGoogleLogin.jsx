@@ -1,5 +1,5 @@
 import Modal from '@mui/material/Modal';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ModalGrid, StyledGrid } from './ModalGoogleLogin.styled';
 import { Box, Button } from '@mui/material'
 import {
@@ -42,7 +42,7 @@ const theme = createTheme({
 
 const ModalGoogleLogin = ({ open, onClose }) => {
 
-  const [isLoading, setIsLoading] = useState(false);
+
 
   const auth = getAuth(app);
   const dispatch = useDispatch();
@@ -50,10 +50,10 @@ const ModalGoogleLogin = ({ open, onClose }) => {
   const handleClose = () => {
     onClose();
     };
-    console.log('isLoading', isLoading)
+
   useEffect(() => {
     const handleRedirect = async () => {
-      setIsLoading(true); // Встановлюємо isLoading на true перед початком аутентифікації
+
       try {
         const result = await getRedirectResult(auth);
         if (result && result.user) {
@@ -64,7 +64,6 @@ const ModalGoogleLogin = ({ open, onClose }) => {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false); // Позначаємо завершення аутентифікації, незалежно від результату
       }
     };
 

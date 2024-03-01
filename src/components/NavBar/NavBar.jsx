@@ -31,13 +31,9 @@ const NavBar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  // const navigate = useNavigate();
-  
-  // const handleLogin = () => {
-  //   navigate('/login');
-  // };
+
    const handleLogin = () => {
-    setIsLoginFormOpen(true); // Відкриття форми логіну при натисканні на кнопку "Увійти"
+    setIsLoginFormOpen(true); 
   };
 
   const handleLogout = () => {
