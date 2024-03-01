@@ -7,7 +7,7 @@ const Success = () => {
     <DivBox>
       <h1>My New Successes</h1>
     <p>
-              Or <Link to="/login">Login</Link>
+              Перейдіть за посиланням: <Link to="/habittracker">Формування нової звички</Link>
           </p>
     </DivBox>
   )
