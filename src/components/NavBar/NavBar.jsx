@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet} from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -16,10 +16,12 @@ import { removeUser } from '../../redux/slice/userSlice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Navigation} from './Navigation/Navigation'
+import ModalGoogleLogin from 'components/ModalGoogleLogin/ModalGoogleLogin';
 
 const NavBar = () => {
   const { isAuth, displayName, photoURL } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoginFormOpen, setIsLoginFormOpen] = useState(false);
   const dispatch = useDispatch();
 
   const handleMenu = (event) => {
@@ -29,10 +31,13 @@ const NavBar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
-  const handleLogin = () => {
-    navigate('/login');
+  // const handleLogin = () => {
+  //   navigate('/login');
+  // };
+   const handleLogin = () => {
+    setIsLoginFormOpen(true); // Відкриття форми логіну при натисканні на кнопку "Увійти"
   };
 
   const handleLogout = () => {
@@ -103,6 +108,7 @@ const NavBar = () => {
       <Suspense fallback={<div>Loading page...</div>}>
         <Outlet />
       </Suspense>
+      <ModalGoogleLogin open={isLoginFormOpen} onClose={() => setIsLoginFormOpen(false)} />
     </div>
   );
 };
