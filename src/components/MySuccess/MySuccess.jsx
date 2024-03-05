@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDataFromDatabase, setButtonsData } from '../../redux/slice/habitTrackerSlice';
 
 const CustomizedRating = ({ value, onChangeRating }) => {
   const handleChange = (event, newValue) => {
@@ -56,30 +58,17 @@ const buttonsObj = [
 ];
 
 const HabitTracker = () => {
-  const [progress, setProgress] = useState(0);
-  const [page, setPage] = useState(1);
+  const dispatch = useDispatch();
+  const buttonsData = useSelector(state => state.habitTracker.buttonsData);
+  const [progress, setProgress] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const itemsPerPage = 7;
-  const [buttonsData, setButtonsData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dayDocRef = doc(db, 'days', 'new');
-        const daySnap = await getDoc(dayDocRef);
-        if (daySnap.exists()) {
-          setButtonsData(daySnap.data().buttonsData);
-        } else {
-          setButtonsData(buttonsObj);
-        }
-      } catch (error) {
-        console.error("Помилка при отриманні документу:", error);
-      }
-    };
-    fetchData();
-  }, []);
+    dispatch(fetchDataFromDatabase());
+  }, [dispatch]);
 
   useEffect(() => {
-
     if (buttonsData.length === 0) return;
     const totalActiveButtons = buttonsData.filter(button => !button.active).length;
     const totalButtons = buttonsData.length;
@@ -95,37 +84,40 @@ const HabitTracker = () => {
     }
   }, [buttonsData]);
 
-  const handleDayClick = async (id) => {
-    const updatedButtonsData = buttonsData.map(button =>
-      button.id === id ? { ...button, active: !button.active } : button
-    );
-    setButtonsData(updatedButtonsData);
+ const handleDayClick = async (id) => {
+  const updatedButtonsData = buttonsData.map(button =>
+    button.id === id ? { ...button, active: !button.active } : button
+  );
+  
+  dispatch(setButtonsData(updatedButtonsData)); // Використовуємо диспетчер Redux для оновлення даних
 
-    try {
-      const daysCollectionRef = collection(db, 'days');
-      const dayDocRef = doc(daysCollectionRef, "new");
-      await setDoc(dayDocRef, { buttonsData: updatedButtonsData });
-    } catch (error) {
-      console.error("Помилка при оновленні документу: ", error);
-    }
-  };
+  try {
+    const daysCollectionRef = collection(db, 'days');
+    const dayDocRef = doc(daysCollectionRef, "new");
+    await setDoc(dayDocRef, { buttonsData: updatedButtonsData });
+  } catch (error) {
+    console.error("Помилка при оновленні документу: ", error);
+  }
+};
 
-  const handleRatingChange = async (value, id) => {
-    const updatedButtonsData = buttonsData.map(button =>
-      button.id === id ? { ...button, rating: value } : button
-    );
-    setButtonsData(updatedButtonsData);
+const handleRatingChange = async (value, id) => {
+  const updatedButtonsData = buttonsData.map(button =>
+    button.id === id ? { ...button, rating: value } : button
+  );
+  
+  dispatch(setButtonsData(updatedButtonsData)); // Використовуємо диспетчер Redux для оновлення даних
 
-    try {
-      const daysCollectionRef = collection(db, 'days');
-      const dayDocRef = doc(daysCollectionRef, "new");
-      const daySnap = await getDoc(dayDocRef);
-      const currentData = daySnap.data() || {};
-      await setDoc(dayDocRef, { ...currentData, buttonsData: updatedButtonsData });
-    } catch (error) {
-      console.error("Помилка при оновленні документу: ", error);
-    }
-  };
+  try {
+    const daysCollectionRef = collection(db, 'days');
+    const dayDocRef = doc(daysCollectionRef, "new");
+    const daySnap = await getDoc(dayDocRef);
+    const currentData = daySnap.data() || {};
+    await setDoc(dayDocRef, { ...currentData, buttonsData: updatedButtonsData });
+  } catch (error) {
+    console.error("Помилка при оновленні документу: ", error);
+  }
+};
+
 
   const totalRating = buttonsData.reduce((acc, obj) => acc + obj.rating, 0);
 
