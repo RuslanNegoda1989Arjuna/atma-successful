@@ -1,5 +1,5 @@
 
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore} from '@reduxjs/toolkit';
 import userReducer from './slice/userSlice';
 import habitTrackerReducer, { fetchDataFromDatabase } from './slice/habitTrackerSlice';
 import { persistStore, persistReducer } from 'redux-persist';
