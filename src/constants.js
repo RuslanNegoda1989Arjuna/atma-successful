@@ -1,0 +1,23 @@
+export const buttonsObj = [
+  { id: 1, active: true, rating: 0 },
+  { id: 2, active: true, rating: 0 },
+  { id: 3, active: true, rating: 0 },
+  { id: 4, active: true, rating: 0 },
+  { id: 5, active: true, rating: 0 },
+  { id: 6, active: true, rating: 0 },
+  { id: 7, active: true, rating: 0 },
+  { id: 8, active: true, rating: 0 },
+  { id: 9, active: true, rating: 0 },
+  { id: 10, active: true, rating: 0 },
+  { id: 11, active: true, rating: 0 },
+  { id: 12, active: true, rating: 0 },
+  { id: 13, active: true, rating: 0 },
+  { id: 14, active: true, rating: 0 },
+  { id: 15, active: true, rating: 0 },
+  { id: 16, active: true, rating: 0 },
+  { id: 17, active: true, rating: 0 },
+  { id: 18, active: true, rating: 0 },
+  { id: 19, active: true, rating: 0 },
+  { id: 20, active: true, rating: 0 },
+  { id: 21, active: true, rating: 0 }
+];

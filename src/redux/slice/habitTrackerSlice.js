@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { buttonsObj } from '../../constants';
 
 const initialState = {
-  buttonsData: [],
+  buttonsData: buttonsObj,
   status: 'idle',
   error: null
 };
@@ -13,12 +14,12 @@ export const fetchDataFromDatabase = createAsyncThunk(
   async () => {
     try {
       const dayDocRef = doc(db, 'days', 'new');
-        const daySnap = await getDoc(dayDocRef);
-        console.log('daySnap:', daySnap)
+      const daySnap = await getDoc(dayDocRef);
       if (daySnap.exists()) {
         return daySnap.data().buttonsData;
       } else {
-        return [];
+        await setDoc(dayDocRef, { buttonsData: buttonsObj });
+        return buttonsObj;
       }
     } catch (error) {
       throw error;
@@ -41,7 +42,7 @@ const habitTrackerSlice = createSlice({
       })
       .addCase(fetchDataFromDatabase.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.buttonsData = action.payload;
+        state.buttonsData = action.payload || initialState.buttonsData;
       })
       .addCase(fetchDataFromDatabase.rejected, (state, action) => {
         state.status = 'failed';

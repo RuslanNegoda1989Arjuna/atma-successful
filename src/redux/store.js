@@ -8,7 +8,7 @@ import { combineReducers } from 'redux';
 
 
 const persistConfig = {
-  key: 'root',
+  key: 'tracker',
   storage,
 };
 

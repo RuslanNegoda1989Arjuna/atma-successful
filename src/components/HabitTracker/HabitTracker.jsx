@@ -1,61 +1,16 @@
 import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { StyledRating } from './HabitTracker.styled';
+import DayRatingButton from '../Buttons/DayRatingButton';
+import PaginationButtons from '../Buttons/PaginationButtons';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataFromDatabase, setButtonsData } from '../../redux/slice/habitTrackerSlice';
-
-const CustomizedRating = ({ value, onChangeRating }) => {
-  const handleChange = (event, newValue) => {
-    onChangeRating(newValue);
-  };
-
-  return (
-    <StyledRating
-      name="customized-color"
-      value={value}
-      onChange={handleChange}
-      getLabelText={(value) => `${value} бали`}
-      precision={1}
-      max={3}
-      icon={<FavoriteIcon fontSize="inherit" />}
-      emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
-    />
-  );
-};
-
-const buttonsObj = [
-  { id: 1, active: true, rating: 0 },
-  { id: 2, active: true, rating: 0 },
-  { id: 3, active: true, rating: 0 },
-  { id: 4, active: true, rating: 0 },
-  { id: 5, active: true, rating: 0 },
-  { id: 6, active: true, rating: 0 },
-  { id: 7, active: true, rating: 0 },
-  { id: 8, active: true, rating: 0 },
-  { id: 9, active: true, rating: 0 },
-  { id: 10, active: true, rating: 0 },
-  { id: 11, active: true, rating: 0 },
-  { id: 12, active: true, rating: 0 },
-  { id: 13, active: true, rating: 0 },
-  { id: 14, active: true, rating: 0 },
-  { id: 15, active: true, rating: 0 },
-  { id: 16, active: true, rating: 0 },
-  { id: 17, active: true, rating: 0 },
-  { id: 18, active: true, rating: 0 },
-  { id: 19, active: true, rating: 0 },
-  { id: 20, active: true, rating: 0 },
-  { id: 21, active: true, rating: 0 }
-];
+import { buttonsObj } from '../../constants';
 
 const HabitTracker = () => {
   const dispatch = useDispatch();
@@ -125,22 +80,13 @@ const handleRatingChange = async (value, id) => {
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return buttonsData.slice(start, end).map((button, index) => (
-      <Box key={button.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <Button
-          variant={button.active ? 'outlined' : 'contained'}
-          sx={{ width: '150px' }}
-          onClick={() => handleDayClick(button.id)}
-          disabled={!button.active}
-        >
-          {`День ${index + start + 1}`}
-        </Button>
-        <Typography sx={{ ml: 1 }}>
-          <CustomizedRating
-            value={button.rating}
-            onChangeRating={(value) => handleRatingChange(value, button.id)}
-          />
-        </Typography>
-      </Box>
+      <DayRatingButton
+        key={button.id}
+        button={button}
+        index={index + start}
+        handleDayClick={handleDayClick}
+        handleRatingChange={handleRatingChange}
+      />
     ));
   };
 
@@ -161,16 +107,7 @@ const handleRatingChange = async (value, id) => {
         sx={{ width: '80%', height: '20px', mb: 2, borderRadius: '10px', marginTop: '20px' }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
-        <Button
-          onClick={() => setPage((prev) => (prev > 1 ? prev - 1 : prev))}
-          disabled={page === 1}
-        >
-          <ArrowBackIcon />
-          Back
-        </Button>
-        <Button onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}>
-          Show More
-        </Button>
+        <PaginationButtons setPage={setPage} page={page} totalPages={totalPages} />
       </Box>
     </Box>
   );

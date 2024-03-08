@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledRating } from './HabitTracker.styled';
+import { StyledRating } from '../HabitTracker/HabitTracker.styled';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
