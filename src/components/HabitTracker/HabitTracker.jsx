@@ -6,8 +6,8 @@ import DayRatingButton from '../Buttons/DayRatingButton';
 import PaginationButtons from '../Buttons/PaginationButtons';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { doc, setDoc} from "firebase/firestore";
+import { db, auth } from "../../firebase";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataFromDatabase, setButtonsData } from '../../redux/slice/habitTrackerSlice';
 import { buttonsObj } from '../../constants';
@@ -18,10 +18,12 @@ const HabitTracker = () => {
   const [progress, setProgress] = React.useState(0);
   const [page, setPage] = React.useState(1);
   const itemsPerPage = 7;
+  const user = auth.currentUser;
+  const userId = user.uid; // Отримати ідентифікатор поточного користувача
 
   useEffect(() => {
-    dispatch(fetchDataFromDatabase());
-  }, [dispatch]);
+    dispatch(fetchDataFromDatabase(userId)); // Передати userId для завантаження даних конкретного користувача
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (buttonsData.length === 0) return;
@@ -39,17 +41,16 @@ const HabitTracker = () => {
     }
   }, [buttonsData]);
 
- const handleDayClick = async (id) => {
+  const handleDayClick = async (id) => {
   const updatedButtonsData = buttonsData.map(button =>
     button.id === id ? { ...button, active: !button.active } : button
   );
-  
-  dispatch(setButtonsData(updatedButtonsData)); // Використовуємо диспетчер Redux для оновлення даних
+
+  dispatch(setButtonsData(updatedButtonsData));
 
   try {
-    const daysCollectionRef = collection(db, 'days');
-    const dayDocRef = doc(daysCollectionRef, "new");
-    await setDoc(dayDocRef, { buttonsData: updatedButtonsData });
+    const userDocRef = doc(db, 'users', userId); // Звернутися до документу користувача
+    await setDoc(userDocRef, { buttonsData: updatedButtonsData }, { merge: true }); // Оновити дані користувача
   } catch (error) {
     console.error("Помилка при оновленні документу: ", error);
   }
@@ -59,15 +60,12 @@ const handleRatingChange = async (value, id) => {
   const updatedButtonsData = buttonsData.map(button =>
     button.id === id ? { ...button, rating: value } : button
   );
-  
-  dispatch(setButtonsData(updatedButtonsData)); // Використовуємо диспетчер Redux для оновлення даних
+
+  dispatch(setButtonsData(updatedButtonsData));
 
   try {
-    const daysCollectionRef = collection(db, 'days');
-    const dayDocRef = doc(daysCollectionRef, "new");
-    const daySnap = await getDoc(dayDocRef);
-    const currentData = daySnap.data() || {};
-    await setDoc(dayDocRef, { ...currentData, buttonsData: updatedButtonsData });
+    const userDocRef = doc(db, 'users', userId); // Звернутися до документу користувача
+    await setDoc(userDocRef, { buttonsData: updatedButtonsData }, { merge: true }); // Оновити дані користувача
   } catch (error) {
     console.error("Помилка при оновленні документу: ", error);
   }

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, auth } from "../../firebase";
 import { buttonsObj } from '../../constants';
 
 const initialState = {
@@ -13,12 +13,15 @@ export const fetchDataFromDatabase = createAsyncThunk(
   'habitTracker/fetchDataFromDatabase',
   async () => {
     try {
-      const dayDocRef = doc(db, 'days', 'new');
-      const daySnap = await getDoc(dayDocRef);
-      if (daySnap.exists()) {
-        return daySnap.data().buttonsData;
+      const user = auth.currentUser;
+      const userId = user.uid;
+      const userDocRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        return userDoc.data().buttonsData;
       } else {
-        await setDoc(dayDocRef, { buttonsData: buttonsObj });
+        await setDoc(userDocRef, { buttonsData: buttonsObj });
         return buttonsObj;
       }
     } catch (error) {
