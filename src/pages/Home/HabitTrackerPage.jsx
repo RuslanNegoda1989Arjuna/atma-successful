@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from 'hooks/use-auth';
 import { Navigate } from 'react-router-dom';
-import HabitTracker from 'components/MySuccess/MySuccess';
+import HabitTracker from 'components/HabitTracker/HabitTracker';
 import { WelcomeTitle } from './HabitTrackerPage.styled';
 
 // Star icon

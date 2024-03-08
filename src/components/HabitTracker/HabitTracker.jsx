@@ -6,7 +6,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { StyledRating } from './MySuccess.styled';
+import { StyledRating } from './HabitTracker.styled';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
